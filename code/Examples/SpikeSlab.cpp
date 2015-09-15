@@ -1,6 +1,7 @@
 #include "SpikeSlab.h"
 #include "Utils.h"
 #include <cmath>
+#include <limits>
 
 using namespace std;
 
@@ -21,7 +22,7 @@ double SpikeSlab::perturb(RNG& rng)
 	int which = rng.rand_int(params.size());
 	params[which] += rng.randh();
 	if(params[which] < -0.5 || params[which] > 0.5)
-		return -1E300;
+		return -numeric_limits<double>::max();
 	return 0.;
 }
 

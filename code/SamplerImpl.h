@@ -1,6 +1,8 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include <limits>
+#include "Utils.h"
 
 template<class MyModel>
 Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
@@ -10,6 +12,9 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 ,initialised(false)
 ,iteration(0)
 ,mcmc_steps(mcmc_steps)
+,log_prior_mass(log(1. - exp(-1./num_particles)))
+,log_Z(-std::numeric_limits<double>::max())
+,H(0.)
 {
 	// Check for a sensible input value
 	if(num_particles <= 0)
@@ -49,22 +54,32 @@ void Sampler<MyModel>::do_iteration()
 	// Deterministic estimate of log(X) of the worst particle
 	double logX = -static_cast<double>(iteration)/num_particles;
 
-	// Index of the worst particle
+	// Find the index of the worst particle
 	int index = 0;
 	for(int i=1; i<num_particles; i++)
 		if(log_likelihoods[i] < log_likelihoods[index])
 			index = i;
 
-	double threshold = log_likelihoods[index];
+	// Update estimates based on deterministic approximation
+	// on the fly. From appendix of Skilling (2006)
+	double log_posterior_mass = log_prior_mass + log_likelihoods[index];
+	double log_Z_new = logsumexp(log_Z, log_posterior_mass);
+	H = exp(log_posterior_mass - log_Z_new)*log_likelihoods[index]
+		+ exp(log_Z - log_Z_new)*(H + log_Z) - log_Z_new;
+	log_Z = log_Z_new;
 
 	// Print some information to the screen
 	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
 	std::cout<<std::setprecision(10)<<logX<<", log(L) = ";
 	std::cout<<log_likelihoods[index]<<std::endl;
-
+	std::cout<<"# log(Z) = "<<log_Z<<", H = "<<H<<std::endl;
 	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
 
+	// Shrink prior mass
+	log_prior_mass -= 1./num_particles;
+
 	// Replace worst particle with a copy
+	double threshold = log_likelihoods[index];	// Remember threshold
 	int copy;
 	do
 	{
@@ -79,7 +94,7 @@ void Sampler<MyModel>::do_iteration()
 	{
 		MyModel proposal = particles[index];
 		logH = proposal.perturb(rng);
-		if(logH != -1E300)
+		if(logH != -std::numeric_limits<double>::max())
 			logL_proposal = proposal.log_likelihood();
 
 		if(logL_proposal >= threshold && rng.rand() <= exp(logH))

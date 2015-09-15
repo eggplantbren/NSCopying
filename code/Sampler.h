@@ -29,6 +29,10 @@ class Sampler
 		// Number of equilibration steps
 		int mcmc_steps;
 
+		// Results based on deterministic approximation
+		// Log prior mass, log evidence, and information
+		double log_prior_mass, log_Z, H;
+
 	public:
 		// Constructor
 		Sampler(int num_particles, int mcmc_steps);
