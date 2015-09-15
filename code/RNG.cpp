@@ -1,4 +1,5 @@
 #include "RNG.h"
+#include <cmath>
 
 RNG::RNG()
 :uniform(0., 1.)
@@ -19,5 +20,10 @@ double RNG::rand()
 double RNG::randn()
 {
 	return normal(twister);
+}
+
+double RNG::randh()
+{
+	return pow(10., 1.5 - 6.*rand())*randn();
 }
 

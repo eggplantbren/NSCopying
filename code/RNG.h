@@ -27,6 +27,9 @@ class RNG
 
 		// Normal(0, 1)
 		double randn();
+
+		// My favourite heavy-tailed distribution
+		double randh();
 };
 
 #endif
