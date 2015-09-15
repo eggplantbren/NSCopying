@@ -3,12 +3,13 @@
 #include <cstdlib>
 
 template<class MyModel>
-Sampler<MyModel>::Sampler(int num_particles)
+Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 :num_particles(num_particles)
 ,particles(num_particles)
 ,log_likelihoods(num_particles)
 ,initialised(false)
 ,iteration(0)
+,mcmc_steps(mcmc_steps)
 {
 	// Check for a sensible input value
 	if(num_particles <= 0)
@@ -53,12 +54,38 @@ void Sampler<MyModel>::do_iteration()
 		if(log_likelihoods[i] < log_likelihoods[worst])
 			worst = i;
 
+	double threshold = log_likelihoods[worst];
+
 	// Print some information to the screen
 	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
 	std::cout<<std::setprecision(10)<<logX<", log(L) = ";
 	std::cout<<log_likelihoods[worst]<<std::endl;
 
-	// Replace and equilibrate
-	
+	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
+
+	// Replace worst particle with a copy
+	int copy;
+	do
+	{
+		copy = rng.rand_int(num_particles);
+	}while(copy == index);
+	particles[index] = particles[copy];
+	log_likelihoods[index] = log_likelihoods[copy];
+
+	// Equilibrate
+	double logL_proposal, logH;
+	for(int i=0; i<mcmc_steps; i++)
+	{
+		MyModel proposal = particles[index];
+		logH = proposal.perturb(rng);
+		logL_proposal = proposal.log_likelihood();
+
+		if(logL_proposal >= threshold && rng.rand() <= exp(logH))
+		{
+			particles[index] = proposal;
+			log_likelihoods[index] = logL_proposal;
+		}
+	}
+	std::cout<<"done."<<std::endl;
 }
 
