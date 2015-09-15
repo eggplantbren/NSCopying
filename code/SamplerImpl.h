@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 
 template<class MyModel>
@@ -7,6 +8,7 @@ Sampler<MyModel>::Sampler(int num_particles)
 ,particles(num_particles)
 ,log_likelihoods(num_particles)
 ,initialised(false)
+,iteration(0)
 {
 	// Check for a sensible input value
 	if(num_particles <= 0)
@@ -33,5 +35,30 @@ void Sampler<MyModel>::initialise()
 
 	initialised = true;
 	std::cout<<"done."<<std::endl;
+}
+
+template<class MyModel>
+void Sampler<MyModel>::do_iteration()
+{
+	// Pre-increment iteration
+	iteration++;
+
+	// Deterministic estimate of log(X) of the worst particle
+	double logX = -static_cast<double>(iteration)/num_particles;
+
+	// Index of the worst particle
+	int index = 0;
+	double worst = log_likelihoods[0];
+	for(int i=1; i<num_particles; i++)
+		if(log_likelihoods[i] < log_likelihoods[worst])
+			worst = i;
+
+	// Print some information to the screen
+	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
+	std::cout<<std::setprecision(10)<<logX<", log(L) = ";
+	std::cout<<log_likelihoods[worst]<<std::endl;
+
+	// Replace and equilibrate
+	
 }
 

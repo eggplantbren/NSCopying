@@ -19,6 +19,9 @@ class Sampler
 		// Whether from_prior has been called on all the particles
 		bool initialised;
 
+		// Count number of iterations done
+		int iteration;
+
 	public:
 		// Constructor
 		Sampler(int num_particles);
@@ -26,7 +29,8 @@ class Sampler
 		// Call from_prior on all the particles
 		void initialise();
 
-
+		// Do an iteration of Nested Sampling
+		void do_iteration();
 };
 
 #include "SamplerImpl.h"
