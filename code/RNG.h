@@ -30,6 +30,9 @@ class RNG
 
 		// My favourite heavy-tailed distribution
 		double randh();
+
+		// Integer from {0, 1, 2, ..., N-1}
+		int rand_int(int N);
 };
 
 #endif

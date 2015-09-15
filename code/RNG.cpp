@@ -3,6 +3,7 @@
 
 RNG::RNG()
 :uniform(0., 1.)
+,normal(0., 1.)
 {
 
 }
@@ -24,6 +25,11 @@ double RNG::randn()
 
 double RNG::randh()
 {
-	return pow(10., 1.5 - 6.*rand())*randn();
+	return pow(10., 1.5 - 6.*this->rand())*this->randn();
+}
+
+int RNG::rand_int(int N)
+{
+	return static_cast<int>(floor(N*this->rand()));
 }
 
