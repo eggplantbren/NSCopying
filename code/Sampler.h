@@ -37,6 +37,9 @@ class Sampler
 		// Constructor
 		Sampler(int num_particles, int mcmc_steps);
 
+		// Set RNG seed
+		void set_rng_seed(unsigned int seed);
+
 		// Call from_prior on all the particles
 		void initialise();
 

@@ -27,6 +27,12 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 }
 
 template<class MyModel>
+void Sampler<MyModel>::set_rng_seed(unsigned int seed)
+{
+	rng.set_seed(seed);
+}
+
+template<class MyModel>
 void Sampler<MyModel>::initialise()
 {
 	std::cout<<"# Initialising "<<num_particles<<" particles from the prior...";
