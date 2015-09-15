@@ -11,11 +11,20 @@ template<class MyModel>
 class Sampler
 {
 	private:
-		int num_particles;
+		// The particles, and information about them
+		const int num_particles;
 		std::vector<MyModel> particles;
+		std::vector<double> log_likelihoods;
+
+		// Whether from_prior has been called on all the particles
+		bool initialised;
 
 	public:
+		// Constructor
 		Sampler(int num_particles);
+
+		// Call from_prior on all the particles
+		void initialise();
 
 
 };
