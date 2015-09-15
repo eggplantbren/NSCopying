@@ -41,6 +41,9 @@ class Sampler
 
 		// Do an indefinite number of iterations
 		void run();
+
+		// Do a specified number of iterations
+		void run(int iterations);
 };
 
 #include "SamplerImpl.h"

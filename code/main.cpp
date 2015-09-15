@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
 	Sampler<SpikeSlab> sampler(1000, 1000);
-	sampler.run();
+	sampler.run(100000);
 
 	return 0;
 }

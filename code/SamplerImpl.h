@@ -33,9 +33,8 @@ void Sampler<MyModel>::initialise()
 		particles[i].from_prior(rng);
 		log_likelihoods[i] = particles[i].log_likelihood();
 	}
-
 	initialised = true;
-	std::cout<<"done."<<std::endl;
+	std::cout<<"done."<<std::endl<<std::endl;
 }
 
 template<class MyModel>
@@ -52,17 +51,16 @@ void Sampler<MyModel>::do_iteration()
 
 	// Index of the worst particle
 	int index = 0;
-	double worst = log_likelihoods[0];
 	for(int i=1; i<num_particles; i++)
-		if(log_likelihoods[i] < log_likelihoods[worst])
-			worst = i;
+		if(log_likelihoods[i] < log_likelihoods[index])
+			index = i;
 
-	double threshold = log_likelihoods[worst];
+	double threshold = log_likelihoods[index];
 
 	// Print some information to the screen
 	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
 	std::cout<<std::setprecision(10)<<logX<<", log(L) = ";
-	std::cout<<log_likelihoods[worst]<<std::endl;
+	std::cout<<log_likelihoods[index]<<std::endl;
 
 	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
 
@@ -81,7 +79,8 @@ void Sampler<MyModel>::do_iteration()
 	{
 		MyModel proposal = particles[index];
 		logH = proposal.perturb(rng);
-		logL_proposal = proposal.log_likelihood();
+		if(logH != -1E300)
+			logL_proposal = proposal.log_likelihood();
 
 		if(logL_proposal >= threshold && rng.rand() <= exp(logH))
 		{
@@ -89,7 +88,7 @@ void Sampler<MyModel>::do_iteration()
 			log_likelihoods[index] = logL_proposal;
 		}
 	}
-	std::cout<<"done."<<std::endl;
+	std::cout<<"done."<<std::endl<<std::endl;
 }
 
 template<class MyModel>
@@ -99,4 +98,10 @@ void Sampler<MyModel>::run()
 		do_iteration();
 }
 
+template<class MyModel>
+void Sampler<MyModel>::run(int iterations)
+{
+	for(int i=0; i<iterations; i++)
+		do_iteration();
+}
 
