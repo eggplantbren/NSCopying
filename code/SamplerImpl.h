@@ -71,8 +71,8 @@ void Sampler<MyModel>::do_iteration()
 	// Print some information to the screen
 	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
 	std::cout<<std::setprecision(10)<<logX<<", log(L) = ";
-	std::cout<<log_likelihoods[index]<<std::endl;
-	std::cout<<"# log(Z) = "<<log_Z<<", H = "<<H<<std::endl;
+	std::cout<<log_likelihoods[index]<<"."<<std::endl;
+	std::cout<<"# log(Z) = "<<log_Z<<", H = "<<H<<"."<<std::endl;
 	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
 
 	// Shrink prior mass
@@ -90,6 +90,7 @@ void Sampler<MyModel>::do_iteration()
 
 	// Equilibrate
 	double logL_proposal, logH;
+	int accepted = 0;
 	for(int i=0; i<mcmc_steps; i++)
 	{
 		MyModel proposal = particles[index];
@@ -101,9 +102,11 @@ void Sampler<MyModel>::do_iteration()
 		{
 			particles[index] = proposal;
 			log_likelihoods[index] = logL_proposal;
+			accepted++;
 		}
 	}
-	std::cout<<"done."<<std::endl<<std::endl;
+	std::cout<<"done. Accepted "<<accepted<<"/"<<mcmc_steps<<".";
+	std::cout<<std::endl<<std::endl;
 }
 
 template<class MyModel>
