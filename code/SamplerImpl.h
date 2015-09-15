@@ -21,6 +21,9 @@ Sampler<MyModel>::Sampler(int num_particles)
 template<class MyModel>
 void Sampler<MyModel>::initialise()
 {
+	std::cout<<"# Initialising "<<num_particles<<" particles from the prior...";
+	std::cout<<std::flush;
+
 	// Generate all particles from the prior
 	for(int i=0; i<num_particles; i++)
 	{
@@ -29,5 +32,6 @@ void Sampler<MyModel>::initialise()
 	}
 
 	initialised = true;
+	std::cout<<"done."<<std::endl;
 }
 
