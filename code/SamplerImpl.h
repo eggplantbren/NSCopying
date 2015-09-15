@@ -30,7 +30,7 @@ void Sampler<MyModel>::initialise()
 	// Generate all particles from the prior
 	for(int i=0; i<num_particles; i++)
 	{
-		particles[i].from_prior();
+		particles[i].from_prior(rng);
 		log_likelihoods[i] = particles[i].log_likelihood();
 	}
 
@@ -61,7 +61,7 @@ void Sampler<MyModel>::do_iteration()
 
 	// Print some information to the screen
 	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
-	std::cout<<std::setprecision(10)<<logX<", log(L) = ";
+	std::cout<<std::setprecision(10)<<logX<<", log(L) = ";
 	std::cout<<log_likelihoods[worst]<<std::endl;
 
 	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
@@ -91,4 +91,12 @@ void Sampler<MyModel>::do_iteration()
 	}
 	std::cout<<"done."<<std::endl;
 }
+
+template<class MyModel>
+void Sampler<MyModel>::run()
+{
+	while(true)
+		do_iteration();
+}
+
 

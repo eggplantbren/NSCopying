@@ -38,6 +38,9 @@ class Sampler
 
 		// Do an iteration of Nested Sampling
 		void do_iteration();
+
+		// Do an indefinite number of iterations
+		void run();
 };
 
 #include "SamplerImpl.h"

@@ -1,16 +1,13 @@
 #include <iostream>
 #include "Sampler.h"
-#include "RNG.h"
+#include "Examples/SpikeSlab.h"
 
 using namespace std;
 
 int main()
 {
-	cout<<"Hello, world! Here are some random numbers for you:"<<endl<<endl;
-
-	RNG rng;
-	for(int i=0; i<10; i++)
-		cout<<rng.rand()<<endl;
+	Sampler<SpikeSlab> sampler(1000, 1000);
+	sampler.run();
 
 	return 0;
 }
