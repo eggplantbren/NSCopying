@@ -41,6 +41,9 @@ void Sampler<MyModel>::initialise()
 template<class MyModel>
 void Sampler<MyModel>::do_iteration()
 {
+	if(!initialised)
+		initialise();
+
 	// Pre-increment iteration
 	iteration++;
 
