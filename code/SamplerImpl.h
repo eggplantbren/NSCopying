@@ -21,8 +21,12 @@ Sampler<MyModel>::Sampler(int num_particles)
 template<class MyModel>
 void Sampler<MyModel>::initialise()
 {
-	for(MyModel& p: particles)
-		p.from_prior();
+	// Generate all particles from the prior
+	for(int i=0; i<num_particles; i++)
+	{
+		particles[i].from_prior();
+		log_likelihoods[i] = particles[i].log_likelihood();
+	}
 
 	initialised = true;
 }
