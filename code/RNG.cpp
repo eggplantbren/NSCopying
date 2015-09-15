@@ -16,3 +16,8 @@ double RNG::rand()
 	return uniform(twister);
 }
 
+double RNG::randn()
+{
+	return normal(twister);
+}
+

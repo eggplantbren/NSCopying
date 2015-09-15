@@ -12,6 +12,9 @@ class RNG
 		// For uniform distribution
 		std::uniform_real_distribution<double> uniform;
 
+		// For normal distribution
+		std::normal_distribution<double> normal;
+
 	public:
 		// Constructor
 		RNG();
@@ -21,6 +24,9 @@ class RNG
 
 		// Uniform(0, 1)
 		double rand();
+
+		// Normal(0, 1)
+		double randn();
 };
 
 #endif
