@@ -25,6 +25,12 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 	}
 	if(num_particles > 10000)
 		std::cerr<<"# WARNING: Very large number of particles."<<std::endl;
+
+	// Open the output files, then close them (erases files)
+	sample_file.open("sample.dat", std::ios::out|std::ios::binary);
+	sample_info_file.open("sample_info.dat", std::ios::out|std::ios::binary);
+	sample_file.close();
+	sample_info_file.close();
 }
 
 template<class MyModel>
@@ -82,7 +88,9 @@ void Sampler<MyModel>::do_iteration()
 	std::cout<<std::setprecision(10)<<logX<<", log(L) = ";
 	std::cout<<log_likelihoods[index]<<"."<<std::endl;
 	std::cout<<"# log(Z) = "<<log_Z<<", H = "<<H<<"."<<std::endl;
-	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
+
+	// Save particle and information to disk
+	write_output(index);
 
 	// Shrink prior mass
 	log_prior_mass -= 1./num_particles;
@@ -92,6 +100,7 @@ void Sampler<MyModel>::do_iteration()
 	double threshold_tiebreaker = tiebreakers[index];
 
 	// Replace worst particle with a copy
+	std::cout<<"# Generating a new particle. Equilibrating..."<<std::flush;
 	int copy;
 	do
 	{
@@ -142,6 +151,26 @@ void Sampler<MyModel>::run(int iterations)
 {
 	for(int i=0; i<iterations; i++)
 		do_iteration();
+}
+
+template<class MyModel>
+void Sampler<MyModel>::write_output(int index)
+{
+	// Open the output files, to be appended
+	sample_file.open("sample.dat", std::ios::out|std::ios::binary|std::ios::app);
+	sample_info_file.open("sample_info.dat", std::ios::out|std::ios::binary|std::ios::app);
+
+	// Output iteration, log likelihood, tiebreaker
+	// For single precision output
+	float temp1 = log_likelihoods[index];
+	float temp2 = tiebreakers[index];
+	sample_info_file.write(reinterpret_cast<char*>(&iteration), sizeof(iteration));
+	sample_info_file.write(reinterpret_cast<char*>(&temp1),	sizeof(temp1));
+	sample_info_file.write(reinterpret_cast<char*>(&temp2), sizeof(temp2));
+
+	// Close the output files
+	sample_file.close();
+	sample_info_file.close();
 }
 
 template<class MyModel>

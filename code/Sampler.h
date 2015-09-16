@@ -2,6 +2,7 @@
 #define _Sampler_
 
 #include <vector>
+#include <fstream>
 #include "RNG.h"
 
 /*
@@ -33,6 +34,12 @@ class Sampler
 		// Results based on deterministic approximation
 		// Log prior mass, log evidence, and information
 		double log_prior_mass, log_Z, H;
+
+		// Output file streams
+		std::ofstream sample_file, sample_info_file;
+
+		// Method to write a particular particle (and its info) to disk
+		void write_output(int index);
 
 		// Function to determine whether one (likelihood, tiebreaker)
 		// pair is below another
