@@ -160,6 +160,10 @@ void Sampler<MyModel>::write_output(int index)
 	sample_file.open("sample.dat", std::ios::out|std::ios::binary|std::ios::app);
 	sample_info_file.open("sample_info.dat", std::ios::out|std::ios::binary|std::ios::app);
 
+	// Output the particle
+	particles[index].write(sample_file);
+	sample_file.close();
+
 	// Output iteration, log likelihood, tiebreaker
 	// For single precision output
 	float temp1 = log_likelihoods[index];
@@ -167,9 +171,6 @@ void Sampler<MyModel>::write_output(int index)
 	sample_info_file.write(reinterpret_cast<char*>(&iteration), sizeof(iteration));
 	sample_info_file.write(reinterpret_cast<char*>(&temp1),	sizeof(temp1));
 	sample_info_file.write(reinterpret_cast<char*>(&temp2), sizeof(temp2));
-
-	// Close the output files
-	sample_file.close();
 	sample_info_file.close();
 }
 
