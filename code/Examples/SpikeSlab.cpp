@@ -21,8 +21,7 @@ double SpikeSlab::perturb(RNG& rng)
 {
 	int which = rng.rand_int(params.size());
 	params[which] += rng.randh();
-	if(params[which] < -0.5 || params[which] > 0.5)
-		return -numeric_limits<double>::max();
+	wrap(params[which], -0.5, 0.5);
 	return 0.;
 }
 
