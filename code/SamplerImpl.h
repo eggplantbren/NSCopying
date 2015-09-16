@@ -164,13 +164,15 @@ void Sampler<MyModel>::write_output(int index)
 	particles[index].write(sample_file);
 	sample_file.close();
 
-	// Output iteration, log likelihood, tiebreaker
+	// Output iteration, log prior mass, log likelihood, tiebreaker
 	// For single precision output
-	float temp1 = log_likelihoods[index];
-	float temp2 = tiebreakers[index];
+	float temp1 = log_prior_mass;
+	float temp2 = log_likelihoods[index];
+	float temp3 = tiebreakers[index];
 	sample_info_file.write(reinterpret_cast<char*>(&iteration), sizeof(iteration));
 	sample_info_file.write(reinterpret_cast<char*>(&temp1),	sizeof(temp1));
 	sample_info_file.write(reinterpret_cast<char*>(&temp2), sizeof(temp2));
+	sample_info_file.write(reinterpret_cast<char*>(&temp3), sizeof(temp3));
 	sample_info_file.close();
 }
 

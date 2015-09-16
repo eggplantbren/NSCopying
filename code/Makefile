@@ -1,5 +1,5 @@
 CFLAGS = -std=c++11 -m64 -O3 -flto -march=native -funroll-loops -fPIC -Wall -Wextra -pedantic -DNDEBUG
-OBJECTS = RNG.o Utils.o SpikeSlab.o
+OBJECTS = Results.o RNG.o SpikeSlab.o Utils.o
 
 default:
 	g++ $(CFLAGS) -c *.cpp Examples/*.cpp
