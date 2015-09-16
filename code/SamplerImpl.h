@@ -147,10 +147,12 @@ void Sampler<MyModel>::run()
 }
 
 template<class MyModel>
-void Sampler<MyModel>::run(int iterations)
+double Sampler<MyModel>::run(int iterations)
 {
 	for(int i=0; i<iterations; i++)
 		do_iteration();
+
+	return log_Z;
 }
 
 template<class MyModel>

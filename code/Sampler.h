@@ -63,7 +63,7 @@ class Sampler
 		void run();
 
 		// Do a specified number of iterations
-		void run(int iterations);
+		double run(int iterations);
 };
 
 #include "SamplerImpl.h"
