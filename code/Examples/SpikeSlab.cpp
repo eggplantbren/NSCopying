@@ -43,10 +43,14 @@ double SpikeSlab::log_likelihood() const
 	return logsumexp(logl1, logl2);
 }
 
-void SpikeSlab::print(std::ostream& out) const
+void SpikeSlab::write(std::ostream& out) const
 {
+	float temp;
 	for(size_t i=0; i<params.size(); i++)
-		out<<params[i]<<' ';
+	{
+		temp = params[i];
+		out.write(reinterpret_cast<char*>(&temp), sizeof(temp));
+	}
 }
 
 string SpikeSlab::description() const
