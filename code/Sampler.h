@@ -19,6 +19,7 @@ class Sampler
 		const int num_particles;
 		std::vector<MyModel> particles;
 		std::vector<double> log_likelihoods;
+		std::vector<double> tiebreakers;
 
 		// Whether from_prior has been called on all the particles
 		bool initialised;
@@ -32,6 +33,11 @@ class Sampler
 		// Results based on deterministic approximation
 		// Log prior mass, log evidence, and information
 		double log_prior_mass, log_Z, H;
+
+		// Function to determine whether one (likelihood, tiebreaker)
+		// pair is below another
+		static bool is_below(double log_likelihood1, double tiebreaker1,
+									double log_likelihood2, double tiebreaker2);
 
 	public:
 		// Constructor

@@ -9,6 +9,7 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 :num_particles(num_particles)
 ,particles(num_particles)
 ,log_likelihoods(num_particles)
+,tiebreakers(num_particles)
 ,initialised(false)
 ,iteration(0)
 ,mcmc_steps(mcmc_steps)
@@ -43,6 +44,7 @@ void Sampler<MyModel>::initialise()
 	{
 		particles[i].from_prior(rng);
 		log_likelihoods[i] = particles[i].log_likelihood();
+		tiebreakers[i] = rng.rand();
 	}
 	initialised = true;
 	std::cout<<"done."<<std::endl<<std::endl;
@@ -63,7 +65,8 @@ void Sampler<MyModel>::do_iteration()
 	// Find the index of the worst particle
 	int index = 0;
 	for(int i=1; i<num_particles; i++)
-		if(log_likelihoods[i] < log_likelihoods[index])
+		if(is_below(log_likelihoods[i], tiebreakers[i],
+					log_likelihoods[index], tiebreakers[index]))
 			index = i;
 
 	// Update estimates based on deterministic approximation
@@ -84,8 +87,11 @@ void Sampler<MyModel>::do_iteration()
 	// Shrink prior mass
 	log_prior_mass -= 1./num_particles;
 
+	// Remember threshold
+	double threshold_log_likelihood = log_likelihoods[index];
+	double threshold_tiebreaker = tiebreakers[index];
+
 	// Replace worst particle with a copy
-	double threshold = log_likelihoods[index];	// Remember threshold
 	int copy;
 	do
 	{
@@ -93,21 +99,30 @@ void Sampler<MyModel>::do_iteration()
 	}while(copy == index);
 	particles[index] = particles[copy];
 	log_likelihoods[index] = log_likelihoods[copy];
+	tiebreakers[index] = tiebreakers[copy];
 
 	// Equilibrate
-	double logL_proposal, logH;
+	double tiebreaker_proposal, logL_proposal, logH;
 	int accepted = 0;
 	for(int i=0; i<mcmc_steps; i++)
 	{
+		// Generate proposal
 		MyModel proposal = particles[index];
 		logH = proposal.perturb(rng);
+		tiebreaker_proposal = tiebreakers[index] +
+									pow(10., 1.5 - 10.*rng.rand())*rng.randn();
+		wrap(tiebreaker_proposal, 0., 1.);
+
 		if(logH != -std::numeric_limits<double>::max())
 			logL_proposal = proposal.log_likelihood();
 
-		if(logL_proposal >= threshold && rng.rand() <= exp(logH))
+		if(is_below(threshold_log_likelihood, threshold_tiebreaker,
+						logL_proposal, tiebreaker_proposal) &&
+			rng.rand() <= exp(logH))
 		{
 			particles[index] = proposal;
 			log_likelihoods[index] = logL_proposal;
+			tiebreakers[index] = tiebreaker_proposal;
 			accepted++;
 		}
 	}
@@ -128,4 +143,21 @@ void Sampler<MyModel>::run(int iterations)
 	for(int i=0; i<iterations; i++)
 		do_iteration();
 }
+
+template<class MyModel>
+bool Sampler<MyModel>::is_below(double log_likelihood1, double tiebreaker1,
+									double log_likelihood2, double tiebreaker2)
+{
+	if(log_likelihood1 < log_likelihood2)
+		return true;
+
+	if(log_likelihood1 == log_likelihood2)
+	{
+		if(tiebreaker1 < tiebreaker2)
+			return true;
+	}
+
+	return false;
+}
+
 
