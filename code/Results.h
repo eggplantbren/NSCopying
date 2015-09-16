@@ -8,12 +8,20 @@
 
 #include <vector>
 
+template<class MyModel>
 class Results
 {
+	private:
+		// Flag -- whether things have been loaded and calculated
+		bool ready;
+		std::vector<double> log_prior_mass;
+		std::vector<double> log_posterior_mass;	// Unnormalised
 
-
-
+	public:
+		Results();
+		void process_files();
 };
 
+#include "ResultsImpl.h"
 #endif
 
