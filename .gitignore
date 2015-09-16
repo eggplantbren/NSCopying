@@ -1,3 +1,6 @@
 main
 *.gch
 *.dat
+postprocess
+posterior_sample.txt
+
