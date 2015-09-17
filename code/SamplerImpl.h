@@ -13,7 +13,8 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 ,initialised(false)
 ,iteration(0)
 ,mcmc_steps(mcmc_steps)
-,log_prior_mass(log(1. - exp(-1./num_particles)))
+,log_prior_mass1(log(1. - exp(-1./num_particles)))
+,log_prior_mass2(-log(num_particles))
 ,log_Z(-std::numeric_limits<double>::max())
 ,H(0.)
 {
@@ -77,7 +78,7 @@ void Sampler<MyModel>::do_iteration()
 
 	// Update estimates based on deterministic approximation
 	// on the fly. From appendix of Skilling (2006)
-	double log_posterior_mass = log_prior_mass + log_likelihoods[index];
+	double log_posterior_mass = log_prior_mass1 + log_likelihoods[index];
 	double log_Z_new = logsumexp(log_Z, log_posterior_mass);
 	H = exp(log_posterior_mass - log_Z_new)*log_likelihoods[index]
 		+ exp(log_Z - log_Z_new)*(H + log_Z) - log_Z_new;
@@ -93,7 +94,9 @@ void Sampler<MyModel>::do_iteration()
 	write_output(index);
 
 	// Shrink prior mass
-	log_prior_mass -= 1./num_particles;
+	log_prior_mass1 -= 1./num_particles;
+	log_prior_mass2 = logdiffexp((iteration-1)*log(1. - 1./num_particles),
+									iteration*log(1. - 1./num_particles));
 
 	// Remember threshold
 	double threshold_log_likelihood = log_likelihoods[index];
@@ -166,15 +169,17 @@ void Sampler<MyModel>::write_output(int index)
 	particles[index].write(sample_file);
 	sample_file.close();
 
-	// Output iteration, log prior mass, log likelihood, tiebreaker
+	// Output iteration, log prior mass 1 and 2, log likelihood, tiebreaker
 	// For single precision output
-	float temp1 = log_prior_mass;
-	float temp2 = log_likelihoods[index];
-	float temp3 = tiebreakers[index];
+	float temp1 = log_prior_mass1;
+	float temp2 = log_prior_mass2;
+	float temp3 = log_likelihoods[index];
+	float temp4 = tiebreakers[index];
 	sample_info_file.write(reinterpret_cast<char*>(&iteration), sizeof(iteration));
 	sample_info_file.write(reinterpret_cast<char*>(&temp1),	sizeof(temp1));
 	sample_info_file.write(reinterpret_cast<char*>(&temp2), sizeof(temp2));
 	sample_info_file.write(reinterpret_cast<char*>(&temp3), sizeof(temp3));
+	sample_info_file.write(reinterpret_cast<char*>(&temp4), sizeof(temp4));
 	sample_info_file.close();
 }
 

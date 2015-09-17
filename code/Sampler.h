@@ -32,8 +32,10 @@ class Sampler
 		int mcmc_steps;
 
 		// Results based on deterministic approximation
-		// Log prior mass, log evidence, and information
-		double log_prior_mass, log_Z, H;
+		// Log prior mass (Skilling version),
+		// Log prior mass (Walter version),
+		// log evidence, and information (Skilling versions)
+		double log_prior_mass1, log_prior_mass2, log_Z, H;
 
 		// Output file streams
 		std::ofstream sample_file, sample_info_file;

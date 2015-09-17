@@ -26,12 +26,13 @@ void Results<MyModel>::process_files()
 	log_posterior_mass.clear();
 
 	// Read until end of file
-	int temp1; float temp2, temp3, temp4;
+	int temp1; float temp2, temp3, temp4, temp5;
 	while(sample_info_file.read(reinterpret_cast<char*>(&temp1), sizeof(temp1)))
 	{
 		sample_info_file.read(reinterpret_cast<char*>(&temp2), sizeof(temp2));
 		sample_info_file.read(reinterpret_cast<char*>(&temp3), sizeof(temp3));
 		sample_info_file.read(reinterpret_cast<char*>(&temp4), sizeof(temp4));
+		sample_info_file.read(reinterpret_cast<char*>(&temp5), sizeof(temp5));
 
 		// Keep the prior and (unnormalised) posterior masses in memory
 		log_prior_mass.push_back(temp2);
