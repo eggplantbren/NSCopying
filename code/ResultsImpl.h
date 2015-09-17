@@ -1,5 +1,7 @@
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include "Utils.h"
 
 template<class MyModel>
 Results<MyModel>::Results()
@@ -22,8 +24,9 @@ void Results<MyModel>::process_files()
 	}
 
 	// Clear the values in memory
-	log_prior_mass.clear();
-	log_posterior_mass.clear();
+	log_prior_mass1.clear();
+	log_prior_mass2.clear();
+	log_likelihoods.clear();
 
 	// Read until end of file
 	int temp1; float temp2, temp3, temp4, temp5;
@@ -35,12 +38,39 @@ void Results<MyModel>::process_files()
 		sample_info_file.read(reinterpret_cast<char*>(&temp5), sizeof(temp5));
 
 		// Keep the prior and (unnormalised) posterior masses in memory
-		log_prior_mass.push_back(temp2);
-		log_posterior_mass.push_back(temp1 + temp2);
+		log_prior_mass1.push_back(temp2);
+		log_prior_mass2.push_back(temp3);
+		log_likelihoods.push_back(temp4);
 	}
 	sample_file.close();
 	sample_info_file.close();
 
+	// Normalise prior weights
+	double diff = logsumexp(log_prior_mass1);
+	for(size_t i=0; i<log_prior_mass1.size(); i++)
+		log_prior_mass1[i] -= diff;
+	diff = logsumexp(log_prior_mass2);
+	for(size_t i=0; i<log_prior_mass2.size(); i++)
+		log_prior_mass2[i] -= diff;
+
 	ready = true;
+}
+
+template<class MyModel>
+double Results<MyModel>::log_evidence1() const
+{
+	double logZ = -std::numeric_limits<double>::max();
+	for(size_t i=0; i<log_prior_mass1.size(); i++)
+		logZ = logsumexp(logZ, log_prior_mass1[i] + log_likelihoods[i]);
+	return logZ;
+}
+
+template<class MyModel>
+double Results<MyModel>::log_evidence2() const
+{
+	double logZ = -std::numeric_limits<double>::max();
+	for(size_t i=0; i<log_prior_mass2.size(); i++)
+		logZ = logsumexp(logZ, log_prior_mass2[i] + log_likelihoods[i]);
+	return logZ;
 }
 
