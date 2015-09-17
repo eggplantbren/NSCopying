@@ -66,6 +66,11 @@ class Sampler
 
 		// Do a specified number of iterations
 		double run(int iterations);
+
+		// Open and close (i.e. clear the contents of)
+		// the output files. If not called, it will append
+		// to whatever's already in them
+		void clear_output_files();
 };
 
 #include "SamplerImpl.h"

@@ -26,7 +26,11 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 	}
 	if(num_particles > 10000)
 		std::cerr<<"# WARNING: Very large number of particles."<<std::endl;
+}
 
+template<class MyModel>
+void Sampler<MyModel>::clear_output_files()
+{
 	// Open the output files, then close them (erases files)
 	sample_file.open("sample.dat", std::ios::out|std::ios::binary);
 	sample_info_file.open("sample_info.dat", std::ios::out|std::ios::binary);
