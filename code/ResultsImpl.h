@@ -5,20 +5,19 @@
 
 template<class MyModel>
 Results<MyModel>::Results()
-:ready(false)
+:read_sample_info_flag(false)
 {
 
 }
 
 template<class MyModel>
-void Results<MyModel>::process_files()
+void Results<MyModel>::read_sample_info()
 {
 	// Open the output files (assume standard filenames)
-	std::fstream sample_file("sample.dat", std::ios::in|std::ios::binary);
 	std::fstream sample_info_file("sample_info.dat", std::ios::in|std::ios::binary);
-	if(!sample_file || !sample_info_file)
+	if(!sample_info_file)
 	{
-		std::cerr<<"Error opening either sample.dat or sample_info.dat.";
+		std::cerr<<"Error opening sample_info.dat.";
 		std::cerr<<std::endl;
 		return;
 	}
@@ -42,7 +41,6 @@ void Results<MyModel>::process_files()
 		log_prior_mass2.push_back(temp3);
 		log_likelihoods.push_back(temp4);
 	}
-	sample_file.close();
 	sample_info_file.close();
 
 	// Normalise prior weights
@@ -53,7 +51,7 @@ void Results<MyModel>::process_files()
 	for(size_t i=0; i<log_prior_mass2.size(); i++)
 		log_prior_mass2[i] -= diff;
 
-	ready = true;
+	read_sample_info_flag = true;
 }
 
 template<class MyModel>

@@ -12,14 +12,14 @@ template<class MyModel>
 class Results
 {
 	private:
-		// Flag -- whether things have been loaded and calculated
-		bool ready;
+		// Flag -- whether read_sample_info() has been called
+		bool read_sample_info_flag;
 		std::vector<double> log_prior_mass1, log_prior_mass2;
 		std::vector<double> log_likelihoods;
 
 	public:
 		Results();
-		void process_files();
+		void read_sample_info();
 
 		double log_evidence1() const;
 		double log_evidence2() const;

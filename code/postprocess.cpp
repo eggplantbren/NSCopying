@@ -8,7 +8,7 @@ using namespace std;
 int main()
 {
 	Results<SpikeSlab> results;
-	results.process_files();
+	results.read_sample_info();
 
 	return 0;
 }
