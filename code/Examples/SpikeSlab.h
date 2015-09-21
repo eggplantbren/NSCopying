@@ -22,11 +22,14 @@ class SpikeSlab
 		// Likelihood function
 		double log_likelihood() const;
 
+		// Read from stream (binary format)
+		void read(std::istream& in);
+
 		// Write to stream (binary format)
 		void write(std::ostream& out) const;
 
-		// Return string with column information
-		std::string description() const;
+		// Write to stream (text format)
+		void write_text(std::ostream& out) const;
 };
 
 #endif

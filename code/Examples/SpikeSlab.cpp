@@ -53,8 +53,20 @@ void SpikeSlab::write(std::ostream& out) const
 	}
 }
 
-string SpikeSlab::description() const
+void SpikeSlab::read(std::istream& in)
 {
-	return string("Each column is one of the 20 parameters.");
+	float temp;
+	for(size_t i=0; i<params.size(); i++)
+	{
+		in.read(reinterpret_cast<char*>(&temp), sizeof(temp));
+		params[i] = temp;
+	}
+}
+
+
+void SpikeSlab::write_text(std::ostream& out) const
+{
+	for(size_t i=0; i<params.size(); i++)
+		out<<params[i]<<' ';
 }
 
