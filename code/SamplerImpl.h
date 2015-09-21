@@ -176,14 +176,12 @@ void Sampler<MyModel>::write_output(int index)
 	// Output iteration, log prior mass 1 and 2, log likelihood, tiebreaker
 	// For single precision output
 	float temp1 = log_prior_mass1;
-	float temp2 = log_prior_mass2;
-	float temp3 = log_likelihoods[index];
-	float temp4 = tiebreakers[index];
+	float temp2 = log_likelihoods[index];
+	float temp3 = tiebreakers[index];
 	sample_info_file.write(reinterpret_cast<char*>(&iteration), sizeof(iteration));
 	sample_info_file.write(reinterpret_cast<char*>(&temp1),	sizeof(temp1));
 	sample_info_file.write(reinterpret_cast<char*>(&temp2), sizeof(temp2));
 	sample_info_file.write(reinterpret_cast<char*>(&temp3), sizeof(temp3));
-	sample_info_file.write(reinterpret_cast<char*>(&temp4), sizeof(temp4));
 	sample_info_file.close();
 }
 

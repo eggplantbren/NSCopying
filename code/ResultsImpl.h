@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <cmath>
 #include <limits>
 #include "Utils.h"
 
@@ -23,52 +24,54 @@ void Results<MyModel>::read_sample_info()
 	}
 
 	// Clear the values in memory
-	log_prior_mass1.clear();
-	log_prior_mass2.clear();
+	log_prior_mass.clear();
 	log_likelihoods.clear();
 
 	// Read until end of file
-	int temp1; float temp2, temp3, temp4, temp5;
+	int temp1; float temp2, temp3, temp4;
 	while(sample_info_file.read(reinterpret_cast<char*>(&temp1), sizeof(temp1)))
 	{
 		sample_info_file.read(reinterpret_cast<char*>(&temp2), sizeof(temp2));
 		sample_info_file.read(reinterpret_cast<char*>(&temp3), sizeof(temp3));
 		sample_info_file.read(reinterpret_cast<char*>(&temp4), sizeof(temp4));
-		sample_info_file.read(reinterpret_cast<char*>(&temp5), sizeof(temp5));
 
 		// Keep the prior and (unnormalised) posterior masses in memory
-		log_prior_mass1.push_back(temp2);
-		log_prior_mass2.push_back(temp3);
-		log_likelihoods.push_back(temp4);
+		log_prior_mass.push_back(temp2);
+		log_likelihoods.push_back(temp3);
 	}
 	sample_info_file.close();
 
 	// Normalise prior weights
-	double diff = logsumexp(log_prior_mass1);
-	for(size_t i=0; i<log_prior_mass1.size(); i++)
-		log_prior_mass1[i] -= diff;
-	diff = logsumexp(log_prior_mass2);
-	for(size_t i=0; i<log_prior_mass2.size(); i++)
-		log_prior_mass2[i] -= diff;
+	double diff = logsumexp(log_prior_mass);
+	for(size_t i=0; i<log_prior_mass.size(); i++)
+		log_prior_mass[i] -= diff;
+
+	// Calculate log evidence and information
+	calculate_log_evidence();
+	calculate_information();
 
 	read_sample_info_flag = true;
 }
 
 template<class MyModel>
-double Results<MyModel>::log_evidence1() const
+void Results<MyModel>::calculate_log_evidence()
 {
-	double logZ = -std::numeric_limits<double>::max();
-	for(size_t i=0; i<log_prior_mass1.size(); i++)
-		logZ = logsumexp(logZ, log_prior_mass1[i] + log_likelihoods[i]);
-	return logZ;
+	logZ = -std::numeric_limits<double>::max();
+	for(size_t i=0; i<log_prior_mass.size(); i++)
+		logZ = logsumexp(logZ, log_prior_mass[i] + log_likelihoods[i]);
 }
 
 template<class MyModel>
-double Results<MyModel>::log_evidence2() const
+void Results<MyModel>::calculate_information()
 {
-	double logZ = -std::numeric_limits<double>::max();
-	for(size_t i=0; i<log_prior_mass2.size(); i++)
-		logZ = logsumexp(logZ, log_prior_mass2[i] + log_likelihoods[i]);
-	return logZ;
+	H = 0.;
+
+	double logp;
+	for(size_t i=0; i<log_prior_mass.size(); i++)
+	{
+		// Normalised prior mass
+		logp = log_prior_mass[i] + log_likelihoods[i] - logZ;
+		H += exp(logp)*(logp - log_prior_mass[i]);
+	}
 }
 
