@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include <limits>
 #include "Utils.h"
 
@@ -85,5 +86,26 @@ void Results<MyModel>::calculate_information()
 		logp = log_prior_masses[i] + log_likelihoods[i] - logZ;
 		H += exp(logp)*(logp - log_prior_masses[i]);
 	}
+}
+
+template<class MyModel>
+void Results<MyModel>::regenerate_logX(RNG& rng)
+{
+	// Using the method of generating rands and taking their max
+	std::vector<double> logx(num_particles);
+	for(size_t i=0; i<logx.size(); i++)
+		logx[i] = log(rng.rand());
+
+	std::vector<double>::iterator winner;
+	for(size_t i=0; i<logX.size(); i++)
+	{
+		winner = max_element(logx.begin(), logx.end());
+		logX[i] = *winner;
+		*winner += log(rng.rand());
+	}
+
+	calculate_prior_masses();
+	calculate_log_evidence();
+	calculate_information();
 }
 

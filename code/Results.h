@@ -8,6 +8,7 @@
 */
 
 #include <vector>
+#include "RNG.h"
 
 template<class MyModel>
 class Results
@@ -31,6 +32,9 @@ class Results
 	public:
 		Results();
 		void read_sample_info();
+
+		// Generate a new possibility for the log(X) sequence
+		void regenerate_logX(RNG& rng);
 
 		// Getters
 		double get_log_evidence() const
