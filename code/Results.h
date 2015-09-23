@@ -15,13 +15,16 @@ class Results
 	private:
 		// Flag -- whether read_sample_info() has been called
 		bool read_sample_info_flag;
-		std::vector<double> log_prior_mass;
+		int num_particles;
+		std::vector<double> logX;
+		std::vector<double> log_prior_masses;
 		std::vector<double> log_likelihoods;
 
 		// log evidence and information
 		double logZ, H;
 
 		// Methods that calculate the above
+		void calculate_prior_masses();
 		void calculate_log_evidence();
 		void calculate_information();
 

@@ -34,6 +34,10 @@ void Sampler<MyModel>::clear_output_files()
 	// Open the output files, then close them (erases files)
 	sample_file.open("sample.dat", std::ios::out|std::ios::binary);
 	sample_info_file.open("sample_info.dat", std::ios::out|std::ios::binary);
+
+	// Write out the number of particles
+	sample_info_file.write(reinterpret_cast<char*>(&num_particles), sizeof(num_particles));
+
 	sample_file.close();
 	sample_info_file.close();
 }
@@ -71,7 +75,7 @@ void Sampler<MyModel>::do_iteration()
 	iteration++;
 
 	// Deterministic estimate of log(X) of the worst particle
-	double logX = -static_cast<double>(iteration)/num_particles;
+	logX = -static_cast<double>(iteration)/num_particles;
 
 	// Find the index of the worst particle
 	int index = 0;
@@ -173,15 +177,12 @@ void Sampler<MyModel>::write_output(int index)
 	particles[index].write(sample_file);
 	sample_file.close();
 
-	// Output iteration, log prior mass 1 and 2, log likelihood, tiebreaker
-	// For single precision output
-	float temp1 = log_prior_mass1;
-	float temp2 = log_likelihoods[index];
-	float temp3 = tiebreakers[index];
+	// Output iteration, logX, log likelihood, tiebreaker
+	// Output in double precision (only use single precision for parameters)
 	sample_info_file.write(reinterpret_cast<char*>(&iteration), sizeof(iteration));
-	sample_info_file.write(reinterpret_cast<char*>(&temp1),	sizeof(temp1));
-	sample_info_file.write(reinterpret_cast<char*>(&temp2), sizeof(temp2));
-	sample_info_file.write(reinterpret_cast<char*>(&temp3), sizeof(temp3));
+	sample_info_file.write(reinterpret_cast<char*>(&logX),	sizeof(logX));
+	sample_info_file.write(reinterpret_cast<char*>(&log_likelihoods[index]), sizeof(log_likelihoods[index]));
+	sample_info_file.write(reinterpret_cast<char*>(&tiebreakers[index]), sizeof(log_likelihoods[index]));
 	sample_info_file.close();
 }
 

@@ -17,7 +17,7 @@ class Sampler
 		RNG rng;
 
 		// The particles, and information about them
-		const int num_particles;
+		int num_particles;
 		std::vector<MyModel> particles;
 		std::vector<double> log_likelihoods;
 		std::vector<double> tiebreakers;
@@ -32,10 +32,11 @@ class Sampler
 		int mcmc_steps;
 
 		// Results based on deterministic approximation
-		// Log prior mass (Skilling version),
-		// Log prior mass (Walter version),
+		// log(X)
+		// log prior mass (Skilling version),
+		// log prior mass (Walter version),
 		// log evidence, and information (Skilling versions)
-		double log_prior_mass1, log_prior_mass2, log_Z, H;
+		double logX, log_prior_mass1, log_prior_mass2, log_Z, H;
 
 		// Output file streams
 		std::ofstream sample_file, sample_info_file;
