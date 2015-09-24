@@ -3,4 +3,5 @@ main
 *.dat
 postprocess
 posterior_sample.txt
-
+output.txt
+measure_accuracy

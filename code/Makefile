@@ -5,5 +5,6 @@ default:
 	g++ $(CFLAGS) -c *.cpp Examples/*.cpp
 	g++ -o main main.o $(OBJECTS)
 	g++ -o postprocess postprocess.o $(OBJECTS)
+	g++ -o measure_accuracy measure_accuracy.o $(OBJECTS)
 	rm -f *.o
 

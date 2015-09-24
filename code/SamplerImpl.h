@@ -15,7 +15,7 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 ,mcmc_steps(mcmc_steps)
 ,log_prior_mass1(log(1. - exp(-1./num_particles)))
 ,log_prior_mass2(-log(num_particles))
-,log_Z(-std::numeric_limits<double>::max())
+,logZ(-std::numeric_limits<double>::max())
 ,H(0.)
 {
 	// Check for a sensible input value
@@ -87,16 +87,16 @@ void Sampler<MyModel>::do_iteration()
 	// Update estimates based on deterministic approximation
 	// on the fly. From appendix of Skilling (2006)
 	double log_posterior_mass = log_prior_mass1 + log_likelihoods[index];
-	double log_Z_new = logsumexp(log_Z, log_posterior_mass);
-	H = exp(log_posterior_mass - log_Z_new)*log_likelihoods[index]
-		+ exp(log_Z - log_Z_new)*(H + log_Z) - log_Z_new;
-	log_Z = log_Z_new;
+	double logZ_new = logsumexp(logZ, log_posterior_mass);
+	H = exp(log_posterior_mass - logZ_new)*log_likelihoods[index]
+		+ exp(logZ - logZ_new)*(H + logZ) - logZ_new;
+	logZ = logZ_new;
 
 	// Print some information to the screen
 	std::cout<<"# Iteration "<<iteration<<", log(X) = ";
 	std::cout<<std::setprecision(10)<<logX<<", log(L) = ";
 	std::cout<<log_likelihoods[index]<<"."<<std::endl;
-	std::cout<<"# log(Z) = "<<log_Z<<", H = "<<H<<"."<<std::endl;
+	std::cout<<"# log(Z) = "<<logZ<<", H = "<<H<<"."<<std::endl;
 
 	// Save particle and information to disk
 	write_output(index);
@@ -163,7 +163,7 @@ double Sampler<MyModel>::run(int iterations)
 	for(int i=0; i<iterations; i++)
 		do_iteration();
 
-	return log_Z;
+	return logZ;
 }
 
 template<class MyModel>

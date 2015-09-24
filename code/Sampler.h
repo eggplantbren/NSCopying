@@ -36,7 +36,7 @@ class Sampler
 		// log prior mass (Skilling version),
 		// log prior mass (Walter version),
 		// log evidence, and information (Skilling versions)
-		double logX, log_prior_mass1, log_prior_mass2, log_Z, H;
+		double logX, log_prior_mass1, log_prior_mass2, logZ, H;
 
 		// Output file streams
 		std::ofstream sample_file, sample_info_file;
@@ -78,6 +78,12 @@ class Sampler
 		{ this->rng = rng; }
 		RNG get_rng() const
 		{ return rng; }
+
+		// More getters
+		double get_logZ() const
+		{ return logZ; }
+		double get_H() const
+		{ return H; }
 };
 
 #include "SamplerImpl.h"
