@@ -72,6 +72,12 @@ class Sampler
 		// the output files. If not called, it will append
 		// to whatever's already in them
 		void clear_output_files();
+
+		// Setter and getter for the RNG
+		void set_rng(const RNG& rng)
+		{ this->rng = rng; }
+		RNG get_rng() const
+		{ return rng; }
 };
 
 #include "SamplerImpl.h"
