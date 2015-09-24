@@ -1,0 +1,7 @@
+# On the standard 20-D SpikeSlab problem with the spike at 0.031
+# num particles, mcmc steps, rms error, reps, sqrt(H/N) [H=63.3]
+2	50000	4.52	72	5.63
+5	20000	3.14	62	3.56
+10	10000	2.40	66	2.52
+20	5000	2.19	59	1.78
+50	2000	1.90	60	1.13
