@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	RNG rng;
 	rng.set_seed((argc == 1)?(time(0)):(atoi(argv[1])));
 
-	int num_particles = 50;
+	int num_particles = 100;
 
 	fstream fout("output.txt", ios::out);
 	while(true)
