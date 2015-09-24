@@ -37,6 +37,8 @@ class Results
 		void regenerate_logX(RNG& rng);
 
 		// Getters
+		int get_num_particles() const
+		{ return num_particles; }
 		double get_log_evidence() const
 		{ return logZ; }
 		double get_information() const

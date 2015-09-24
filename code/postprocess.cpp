@@ -17,8 +17,12 @@ int main()
 	Results<SpikeSlab> results;
 	results.read_sample_info();
 
-	cout<<"ln(Z) = "<<results.get_log_evidence()<<"."<<endl;
-	cout<<"H = "<<results.get_information()<<" nats."<<endl;
+	double logZ = results.get_log_evidence();
+	double H = results.get_information();
+	int N = results.get_num_particles();
+
+	cout<<"ln(Z) = "<<logZ<<" +- "<<sqrt(H/N)<<"."<<endl;
+	cout<<"H = "<<H<<" nats."<<endl;
 
 	return 0;
 }
