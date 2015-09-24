@@ -19,7 +19,7 @@ Sampler<MyModel>::Sampler(int num_particles, int mcmc_steps)
 ,H(0.)
 {
 	// Check for a sensible input value
-	if(num_particles <= 0)
+	if(num_particles <= 1)
 	{
 		std::cerr<<"# ERROR: Bad number of particles."<<std::endl;
 		exit(1);
