@@ -1,3 +1,7 @@
+/*
+* Creates a single sampler and does a run. No-frills.
+*/
+
 #include <iostream>
 #include <ctime>
 #include "Sampler.h"

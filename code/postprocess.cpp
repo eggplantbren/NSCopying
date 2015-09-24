@@ -1,3 +1,8 @@
+/*
+* Loads the results of a SINGLE previously saved run, recalculates and prints
+* the log-evidence and the information.
+*/
+
 #include <iostream>
 #include <fstream>
 #include <ctime>
