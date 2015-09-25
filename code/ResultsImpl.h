@@ -82,7 +82,7 @@ void Results<MyModel>::calculate_information()
 	double logp;
 	for(size_t i=0; i<log_prior_masses.size(); i++)
 	{
-		// Normalised prior mass
+		// Normalised posterior mass
 		logp = log_prior_masses[i] + log_likelihoods[i] - logZ;
 		H += exp(logp)*(logp - log_prior_masses[i]);
 	}
@@ -110,14 +110,20 @@ void Results<MyModel>::regenerate_logX(RNG& rng)
 }
 
 template<class MyModel>
-void Results<MyModel>::generate_posterior_samples(double temperature) const
-{
-	// NOT IMPLEMENTED YET
-}
-
-template<class MyModel>
 void Results<MyModel>::generate_posterior_samples() const
 {
-	generate_posterior_samples(1.);
+	std::cout<<"# Generating posterior samples. Effective sample size = ";
+
+	// Calculate effective sample size
+	double ESS = 0.;
+
+	double logp;
+	for(size_t i=0; i<log_prior_masses.size(); i++)
+	{
+		// Normalised posterior mass
+		logp = log_prior_masses[i] + log_likelihoods[i] - logZ;
+		ESS += -exp(logp)*logp;
+	}
+	std::cout<<ESS<<"."<<std::endl;
 }
 
