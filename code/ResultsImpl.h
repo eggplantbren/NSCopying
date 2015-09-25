@@ -109,3 +109,15 @@ void Results<MyModel>::regenerate_logX(RNG& rng)
 	calculate_information();
 }
 
+template<class MyModel>
+void Results<MyModel>::generate_posterior_samples(double temperature) const
+{
+	// NOT IMPLEMENTED YET
+}
+
+template<class MyModel>
+void Results<MyModel>::generate_posterior_samples() const
+{
+	generate_posterior_samples(1.);
+}
+

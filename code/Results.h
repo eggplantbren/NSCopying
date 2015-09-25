@@ -31,7 +31,15 @@ class Results
 
 	public:
 		Results();
+
+		// Read in sample_info.dat and do some calculations
 		void read_sample_info();
+
+		// Process sample.dat and generate posterior samples
+		void generate_posterior_samples(double temperature) const;
+
+		// This one just calls the above with temperature=1.0
+		void generate_posterior_samples() const;
 
 		// Generate a new possibility for the log(X) sequence
 		void regenerate_logX(RNG& rng);

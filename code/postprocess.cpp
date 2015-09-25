@@ -29,6 +29,8 @@ int main()
 	cout<<"ln(Z) = "<<logZ<<" +- "<<sqrt(H/N)<<"."<<endl;
 	cout<<"H = "<<H<<" nats."<<endl;
 
+	results.generate_posterior_samples();
+
 	return 0;
 }
 
