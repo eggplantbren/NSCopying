@@ -124,6 +124,14 @@ void Results<MyModel>::generate_posterior_samples() const
 		logp = log_prior_masses[i] + log_likelihoods[i] - logZ;
 		ESS += -exp(logp)*logp;
 	}
+	ESS = exp(ESS);
 	std::cout<<ESS<<"."<<std::endl;
+
+	// Open sample.dat for reading and posterior_sample.txt for writing
+	std::fstream fin("sample.dat", std::ios::in|std::ios::binary);
+	std::fstream fout("posterior_sample.txt", std::ios::out);
+
+	fin.close();
+	fout.close();
 }
 
